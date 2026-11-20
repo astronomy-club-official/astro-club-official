@@ -1,54 +1,81 @@
 
+// =============================================================================
+// HERO METEOR & HYPERSPACE WARP ENGINE (Exclusive to Hero Section)
+// =============================================================================
 const canvasWarp = document.getElementById("stars-bg");
 if (canvasWarp) {
   const ctxWarp = canvasWarp.getContext("2d");
 
-  const STAR_COUNT = 380;
-  const MAX_DEPTH = 900;
-  const BASE_SPEED = 0.5; 
-  const BOOST_SPEED = 3.0;
-  const STREAK_RATIO = 0.18;
-  const TRAIL_ALPHA = 0.18;
-
-  const CLUSTER_BIAS = -0.7;
+  const STAR_COUNT = 360;
+  const MAX_DEPTH = 1000;
+  const BASE_SPEED = 0.65;
+  const BOOST_SPEED = 4.8;
+  const STREAK_RATIO = 0.28;
+  const TRAIL_ALPHA = 0.22;
 
   let W = 0,
     H = 0,
     cx = 0,
     cy = 0;
+  let dpr = 1;
   let speed = BASE_SPEED;
-  let boostTimer = 0;
+  let targetSpeed = BASE_SPEED;
 
-  function getStarRGB() {
-    try {
-      const v = getComputedStyle(document.documentElement)
-        .getPropertyValue("--star-color")
-        .trim();
-      return v || "200,220,255";
-    } catch {
-      return "200,220,255";
-    }
-  }
+  const SPECTRAL_COLORS = [
+    { r: 255, g: 255, b: 255 }, // Pure Diamond
+    { r: 210, g: 238, b: 255 }, // Electric Blue-White
+    { r: 120, g: 195, b: 255 }, // Deep Cyan
+    { r: 255, g: 242, b: 215 }, // Stellar Warm
+  ];
 
   let warpStars = [];
   function initWarpStars() {
     warpStars = [];
     for (let i = 0; i < STAR_COUNT; i++) {
-      let rAngle = Math.random() * Math.PI * 2;
-      let rDist =
-        Math.pow(Math.random(), 1 / (1 - CLUSTER_BIAS)) * Math.max(W, H) * 0.5;
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.pow(Math.random(), 0.6) * Math.max(W, H) * 0.55;
+      const color = SPECTRAL_COLORS[Math.floor(Math.random() * SPECTRAL_COLORS.length)];
       warpStars.push({
-        x: Math.cos(rAngle) * rDist,
-        y: Math.sin(rAngle) * rDist,
+        x: Math.cos(angle) * dist,
+        y: Math.sin(angle) * dist,
         z: Math.random() * MAX_DEPTH,
-        size: 0.5 + Math.random() * 1.5,
+        size: 0.7 + Math.random() * 1.5,
+        color,
       });
     }
   }
 
+  // Shooting Star Meteors System
+  let meteors = [];
+  function spawnMeteor() {
+    const startX = Math.random() * W * 1.2 - W * 0.1;
+    const startY = Math.random() * H * 0.45;
+    const angle = (Math.PI / 180) * (32 + Math.random() * 16); // 32 to 48 degree slant
+    const meteorSpeed = 16 + Math.random() * 10;
+    const length = 140 + Math.random() * 120;
+    meteors.push({
+      x: startX,
+      y: startY,
+      vx: Math.cos(angle) * meteorSpeed,
+      vy: Math.sin(angle) * meteorSpeed,
+      length,
+      alpha: 1,
+      decay: 0.016 + Math.random() * 0.012,
+      thickness: 1.5 + Math.random() * 1.2,
+    });
+  }
+
+  let meteorTimer = 0;
+
   function resizeWarp() {
-    W = canvasWarp.width = window.innerWidth;
-    H = canvasWarp.height = window.innerHeight;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvasWarp.width = W * dpr;
+    canvasWarp.height = H * dpr;
+    canvasWarp.style.width = W + "px";
+    canvasWarp.style.height = H + "px";
+    ctxWarp.setTransform(dpr, 0, 0, dpr, 0, 0);
     cx = W / 2;
     cy = H / 2;
     initWarpStars();
@@ -56,211 +83,482 @@ if (canvasWarp) {
 
   function drawWarp() {
     requestAnimationFrame(drawWarp);
-    const rgb = getStarRGB();
 
-    const currentTheme = document.documentElement.getAttribute("data-theme");
-    if (currentTheme === "light") {
+    const isLight = document.documentElement.getAttribute("data-theme") === "light";
+    if (isLight) {
       ctxWarp.fillStyle = `rgba(238, 246, 251, ${TRAIL_ALPHA})`;
     } else {
       ctxWarp.fillStyle = `rgba(5, 10, 20, ${TRAIL_ALPHA})`;
     }
-
     ctxWarp.fillRect(0, 0, W, H);
 
-    if (boostTimer > 0) {
-      boostTimer--;
-      if (boostTimer === 0) speed = BASE_SPEED;
-    }
+    // Inertial speed interpolation on scroll
+    speed += (targetSpeed - speed) * 0.08;
+    targetSpeed += (BASE_SPEED - targetSpeed) * 0.03;
 
+    // 1. Draw Warp Starfield
     for (let i = 0; i < STAR_COUNT; i++) {
-      let s = warpStars[i];
+      const s = warpStars[i];
       s.z -= speed;
 
       if (s.z <= 0) {
         s.z = MAX_DEPTH;
-        let rAngle = Math.random() * Math.PI * 2;
-        let rDist =
-          Math.pow(Math.random(), 1 / (1 - CLUSTER_BIAS)) *
-          Math.max(W, H) *
-          0.5;
-        s.x = Math.cos(rAngle) * rDist;
-        s.y = Math.sin(rAngle) * rDist;
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.pow(Math.random(), 0.6) * Math.max(W, H) * 0.55;
+        s.x = Math.cos(angle) * dist;
+        s.y = Math.sin(angle) * dist;
       }
 
-      let k = 160 / s.z;
-      let px = s.x * k + cx;
-      let py = s.y * k + cy;
+      const k = 180 / s.z;
+      const px = s.x * k + cx;
+      const py = s.y * k + cy;
 
-      if (px < 0 || px > W || py < 0 || py > H) continue;
+      if (px < -30 || px > W + 30 || py < -30 || py > H + 30) continue;
 
-      let r = s.size * (1 - s.z / MAX_DEPTH) * 2.5;
-      ctxWarp.beginPath();
+      const r = s.size * (1 - s.z / MAX_DEPTH) * 2.8;
+      const rgb = isLight ? "16, 52, 92" : `${s.color.r}, ${s.color.g}, ${s.color.b}`;
 
       if (s.z < MAX_DEPTH * STREAK_RATIO) {
-        let tailK = 160 / (s.z + speed * 2);
-        let oldX = s.x * tailK + cx;
-        let oldY = s.y * tailK + cy;
+        const tailK = 180 / (s.z + speed * 2.6);
+        const oldX = s.x * tailK + cx;
+        const oldY = s.y * tailK + cy;
+
+        const streakAlpha = (1 - s.z / (MAX_DEPTH * STREAK_RATIO)) * (isLight ? 0.45 : 0.95);
+
+        const streakGrad = ctxWarp.createLinearGradient(px, py, oldX, oldY);
+        streakGrad.addColorStop(0, `rgba(${rgb}, ${streakAlpha})`);
+        streakGrad.addColorStop(1, `rgba(${rgb}, 0)`);
+
+        ctxWarp.beginPath();
         ctxWarp.moveTo(px, py);
         ctxWarp.lineTo(oldX, oldY);
-        ctxWarp.strokeStyle = `rgba(${rgb}, ${1 - s.z / (MAX_DEPTH * STREAK_RATIO)})`;
-        ctxWarp.lineWidth = r;
+        ctxWarp.strokeStyle = streakGrad;
+        ctxWarp.lineWidth = Math.max(0.8, r * 1.2);
         ctxWarp.lineCap = "round";
         ctxWarp.stroke();
+
+        // Glowing Star Head
+        ctxWarp.beginPath();
+        ctxWarp.arc(px, py, Math.max(0.6, r * 0.7), 0, Math.PI * 2);
+        ctxWarp.fillStyle = `rgba(255, 255, 255, ${streakAlpha})`;
+        ctxWarp.fill();
       } else {
-        ctxWarp.arc(px, py, r, 0, Math.PI * 2);
-        ctxWarp.fillStyle = `rgba(${rgb}, 0.6)`;
+        ctxWarp.beginPath();
+        ctxWarp.arc(px, py, Math.max(0.5, r * 0.6), 0, Math.PI * 2);
+        ctxWarp.fillStyle = `rgba(${rgb}, ${isLight ? 0.35 : 0.8})`;
         ctxWarp.fill();
       }
     }
+
+    // 2. Periodic Cinematic Shooting Star Meteors
+    meteorTimer++;
+    if (meteorTimer > 120 && Math.random() < 0.04) {
+      spawnMeteor();
+      meteorTimer = 0;
+    }
+
+    for (let i = meteors.length - 1; i >= 0; i--) {
+      const m = meteors[i];
+      m.x += m.vx;
+      m.y += m.vy;
+      m.alpha -= m.decay;
+
+      if (m.alpha <= 0 || m.x > W + 100 || m.y > H + 100) {
+        meteors.splice(i, 1);
+        continue;
+      }
+
+      const tailX = m.x - (m.vx / Math.hypot(m.vx, m.vy)) * m.length;
+      const tailY = m.y - (m.vy / Math.hypot(m.vx, m.vy)) * m.length;
+
+      const grad = ctxWarp.createLinearGradient(m.x, m.y, tailX, tailY);
+      if (isLight) {
+        grad.addColorStop(0, `rgba(16, 75, 136, ${m.alpha * 0.9})`);
+        grad.addColorStop(0.3, `rgba(79, 163, 232, ${m.alpha * 0.6})`);
+        grad.addColorStop(1, "rgba(79, 163, 232, 0)");
+      } else {
+        grad.addColorStop(0, `rgba(255, 255, 255, ${m.alpha})`);
+        grad.addColorStop(0.25, `rgba(147, 215, 255, ${m.alpha * 0.85})`);
+        grad.addColorStop(0.65, `rgba(79, 163, 232, ${m.alpha * 0.45})`);
+        grad.addColorStop(1, "rgba(79, 163, 232, 0)");
+      }
+
+      ctxWarp.beginPath();
+      ctxWarp.moveTo(m.x, m.y);
+      ctxWarp.lineTo(tailX, tailY);
+      ctxWarp.strokeStyle = grad;
+      ctxWarp.lineWidth = m.thickness;
+      ctxWarp.lineCap = "round";
+      ctxWarp.stroke();
+
+      // Ionized Glowing Meteor Head
+      ctxWarp.beginPath();
+      ctxWarp.arc(m.x, m.y, m.thickness * 1.5, 0, Math.PI * 2);
+      ctxWarp.fillStyle = isLight
+        ? `rgba(11, 73, 132, ${m.alpha})`
+        : `rgba(255, 255, 255, ${m.alpha})`;
+      ctxWarp.fill();
+    }
+
+    // 3. Smooth bottom fade to transparent
+    const fadeGrad = ctxWarp.createLinearGradient(0, H * 0.84, 0, H);
+    if (isLight) {
+      fadeGrad.addColorStop(0, "rgba(238, 246, 251, 0)");
+      fadeGrad.addColorStop(1, "rgba(238, 246, 251, 1)");
+    } else {
+      fadeGrad.addColorStop(0, "rgba(5, 10, 20, 0)");
+      fadeGrad.addColorStop(1, "rgba(5, 10, 20, 1)");
+    }
+    ctxWarp.fillStyle = fadeGrad;
+    ctxWarp.fillRect(0, H * 0.84, W, H * 0.16);
   }
 
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 5) {
-      speed = BOOST_SPEED;
-      boostTimer = 12;
-    }
-  });
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (window.scrollY < window.innerHeight * 1.4) {
+        targetSpeed = BOOST_SPEED;
+        if (Math.random() < 0.25) spawnMeteor();
+      }
+    },
+    { passive: true },
+  );
 
   resizeWarp();
   window.addEventListener("resize", resizeWarp);
   drawWarp();
 }
 
-
+// =============================================================================
+// CELESTIAL CONSTELLATION ENGINE (High-Visibility Organic Cosmic Mesh)
+// =============================================================================
 const canvasBody = document.getElementById("stars-bg-body");
 if (canvasBody) {
   const ctxBody = canvasBody.getContext("2d");
 
-  const STAR_COUNT_BODY = 140;
-  const CONNECT_DIST = 110;
-  const STRETCH_FACTOR = 3.2;
-  const BASE_SPEED_BODY = 0.25;
-
-  const MIN_STAR_SIZE = 4.0; 
-  const MAX_STAR_SIZE = 9.0;
   let WB = 0,
-    HB = 0;
-  let CXB = 0,
-    CYB = 0;
+    HB = 0,
+    dprB = 1;
+  const CONNECT_DIST = 135;
+  const MOUSE_RADIUS = 175;
 
-  function getStarRGB() {
-    try {
-      const v = getComputedStyle(document.documentElement)
-        .getPropertyValue("--star-color")
-        .trim();
-      return v || "200,220,255";
-    } catch {
-      return "200,220,255";
-    }
-  }
+  const SPECTRAL_PALETTE = [
+    { r: 255, g: 255, b: 255 }, // Pure Diamond White
+    { r: 185, g: 228, b: 255 }, // High-Luminosity Ice Blue
+    { r: 79,  g: 163, b: 232 }, // Electric Celestial Cyan
+    { r: 255, g: 242, b: 210 }, // Solar Gold
+  ];
 
-  function makeBodyStar(initRandom = true) {
-    const layer = Math.random();
-    const angle = Math.random() * Math.PI * 2;
-    const speed = (0.4 + layer * 1.2) * BASE_SPEED_BODY;
-    const maxDist = Math.sqrt(WB * WB + HB * HB) * 0.5;
-    const dist = initRandom
-      ? Math.random() * maxDist
-      : Math.random() * maxDist * 0.5;
+  let dust = [];
+  let stars = [];
+  let mouse = {
+    currX: -9999,
+    currY: -9999,
+    targetX: -9999,
+    targetY: -9999,
+    active: false,
+  };
 
+  let lastScrollY = window.scrollY;
+
+  // Layer 0: Ambient micro-stars
+  function createDust() {
     return {
-      x: CXB + Math.cos(angle) * dist,
-      y: CYB + Math.sin(angle) * dist,
-      angle: angle,
-      speed: speed,
-      r: MIN_STAR_SIZE + layer * (MAX_STAR_SIZE - MIN_STAR_SIZE),
-      o: initRandom ? 0.15 + layer * 0.2 + Math.random() * 0.4 : 0.0,
-      minO: 0.15 + layer * 0.2,
-      maxO: 0.55 + layer * 0.4,
-      do: 0.004 + Math.random() * 0.004,
-      isFadingIn: !initRandom,
-      layer,
+      x: Math.random() * WB,
+      y: Math.random() * HB,
+      radius: 0.45 + Math.random() * 0.55,
+      baseAlpha: 0.25 + Math.random() * 0.45,
+      phase: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.015 + Math.random() * 0.025,
+      vx: (Math.random() - 0.5) * 0.14,
+      vy: (Math.random() - 0.5) * 0.14,
     };
   }
 
-  let bodyStars = [];
+  // Layer 1 & 2: Constellation nodes & Major Beacons
+  function createConstellationStar() {
+    const tier = Math.random();
+    const isMajor = tier < 0.12; // 12% bright alpha beacons
+    const isMedium = tier >= 0.12 && tier < 0.5;
+
+    const radius = isMajor
+      ? 2.8 + Math.random() * 1.0
+      : isMedium
+      ? 1.6 + Math.random() * 0.5
+      : 0.9 + Math.random() * 0.4;
+
+    const baseAlpha = isMajor
+      ? 0.95
+      : isMedium
+      ? 0.75 + Math.random() * 0.2
+      : 0.55 + Math.random() * 0.25;
+
+    const color = SPECTRAL_PALETTE[Math.floor(Math.random() * SPECTRAL_PALETTE.length)];
+
+    return {
+      x: Math.random() * WB,
+      y: Math.random() * HB,
+      radius,
+      baseAlpha,
+      isMajor,
+      color,
+      phase: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.015 + Math.random() * 0.025,
+      vx: (Math.random() - 0.5) * 0.32,
+      vy: (Math.random() - 0.5) * 0.32,
+      angle: Math.random() * Math.PI * 2,
+      angularSpeed: (Math.random() - 0.5) * 0.009,
+      connections: 0,
+    };
+  }
 
   function resizeBody() {
-    WB = canvasBody.width = window.innerWidth;
-    HB = canvasBody.height = window.innerHeight;
-    CXB = WB / 2;
-    CYB = HB / 2;
-    if (bodyStars.length === 0) {
-      bodyStars = Array.from({ length: STAR_COUNT_BODY }, () =>
-        makeBodyStar(true),
-      );
+    dprB = Math.min(window.devicePixelRatio || 1, 2);
+    WB = window.innerWidth;
+    HB = window.innerHeight;
+    canvasBody.width = WB * dprB;
+    canvasBody.height = HB * dprB;
+    canvasBody.style.width = WB + "px";
+    canvasBody.style.height = HB + "px";
+    ctxBody.setTransform(dprB, 0, 0, dprB, 0, 0);
+
+    const starCount = Math.max(70, Math.min(125, Math.floor((WB * HB) / 12500)));
+    const dustCount = Math.max(60, Math.min(110, Math.floor((WB * HB) / 14000)));
+
+    stars = [];
+    for (let i = 0; i < starCount; i++) {
+      stars.push(createConstellationStar());
+    }
+
+    dust = [];
+    for (let i = 0; i < dustCount; i++) {
+      dust.push(createDust());
     }
   }
+
+  window.addEventListener("mousemove", (e) => {
+    mouse.targetX = e.clientX;
+    mouse.targetY = e.clientY;
+    mouse.active = true;
+  });
+
+  window.addEventListener("mouseleave", () => {
+    mouse.targetX = -9999;
+    mouse.targetY = -9999;
+    mouse.active = false;
+  });
+
+  window.addEventListener("scroll", () => {
+    const currentScroll = window.scrollY;
+    const deltaY = currentScroll - lastScrollY;
+    lastScrollY = currentScroll;
+
+    for (let i = 0; i < dust.length; i++) {
+      dust[i].y -= deltaY * 0.06;
+      if (dust[i].y < -10) dust[i].y = HB + 10;
+      if (dust[i].y > HB + 10) dust[i].y = -10;
+    }
+    for (let i = 0; i < stars.length; i++) {
+      stars[i].y -= deltaY * 0.03;
+      if (stars[i].y < -15) stars[i].y = HB + 15;
+      if (stars[i].y > HB + 15) stars[i].y = -15;
+    }
+  }, { passive: true });
 
   function drawBody() {
     requestAnimationFrame(drawBody);
     ctxBody.clearRect(0, 0, WB, HB);
-    const rgb = getStarRGB();
 
-    for (let i = 0; i < bodyStars.length; i++) {
-      const s = bodyStars[i];
-      s.x += Math.cos(s.angle) * s.speed;
-      s.y += Math.sin(s.angle) * s.speed;
-
-      if (s.x < -50 || s.x > WB + 50 || s.y < -50 || s.y > HB + 50) {
-        bodyStars[i] = makeBodyStar(false);
-        continue;
-      }
-
-      if (s.isFadingIn) {
-        s.o += s.do;
-        if (s.o >= s.minO) s.isFadingIn = false;
-      } else {
-        s.o += s.do;
-        if (s.o < s.minO || s.o > s.maxO) s.do *= -1;
-      }
-      s.o = Math.max(0, Math.min(s.o, s.maxO));
+    // Hero Isolation: On pages with a hero (.hero), completely hide the constellation
+    // in the hero section so only the meteors run there. Fade in as user scrolls down.
+    const heroEl = document.querySelector(".hero");
+    if (heroEl) {
+      const heroH = heroEl.offsetHeight || window.innerHeight;
+      const sy = window.scrollY;
+      const progress = Math.min(1, Math.max(0, (sy - heroH * 0.3) / (heroH * 0.4)));
+      canvasBody.style.opacity = progress.toString();
+    } else {
+      canvasBody.style.opacity = "1";
     }
 
-    for (let i = 0; i < bodyStars.length; i++) {
-      for (let j = i + 1; j < bodyStars.length; j++) {
-        const a = bodyStars[i],
-          b = bodyStars[j];
-        if (Math.abs(a.layer - b.layer) > 0.35) continue;
+    const isLight = document.documentElement.getAttribute("data-theme") === "light";
 
+    // Smooth cursor interpolation
+    if (mouse.active) {
+      mouse.currX += (mouse.targetX - mouse.currX) * 0.14;
+      mouse.currY += (mouse.targetY - mouse.currY) * 0.14;
+    } else {
+      mouse.currX = -9999;
+      mouse.currY = -9999;
+    }
+
+    // 1. Draw Layer 0: Ambient Micro-Star Dust
+    for (let i = 0; i < dust.length; i++) {
+      const d = dust[i];
+      d.phase += d.pulseSpeed;
+      d.x += d.vx;
+      d.y += d.vy;
+
+      if (d.x < 0) d.x = WB;
+      if (d.x > WB) d.x = 0;
+      if (d.y < 0) d.y = HB;
+      if (d.y > HB) d.y = 0;
+
+      const twinkle = 0.55 + 0.45 * Math.sin(d.phase);
+      const alpha = d.baseAlpha * twinkle * (isLight ? 0.45 : 0.85);
+
+      ctxBody.beginPath();
+      ctxBody.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+      ctxBody.fillStyle = isLight
+        ? `rgba(16, 75, 136, ${alpha})`
+        : `rgba(215, 238, 255, ${alpha})`;
+      ctxBody.fill();
+    }
+
+    // 2. Update Constellation Nodes & Physics
+    const starCount = stars.length;
+    for (let i = 0; i < starCount; i++) {
+      const s = stars[i];
+      s.connections = 0;
+
+      // Mouse Gravitational Attraction
+      if (mouse.active) {
+        const dxM = mouse.currX - s.x;
+        const dyM = mouse.currY - s.y;
+        const distM = Math.hypot(dxM, dyM);
+        if (distM < MOUSE_RADIUS && distM > 8) {
+          const force = (1 - distM / MOUSE_RADIUS) * 0.026;
+          s.vx += (dxM / distM) * force;
+          s.vy += (dyM / distM) * force;
+        }
+      }
+
+      s.angle += s.angularSpeed;
+      s.vx += Math.cos(s.angle) * 0.007;
+      s.vy += Math.sin(s.angle) * 0.007;
+      s.vx *= 0.985;
+      s.vy *= 0.985;
+
+      s.x += s.vx;
+      s.y += s.vy;
+      s.phase += s.pulseSpeed;
+
+      if (s.x < -15) s.x = WB + 15;
+      if (s.x > WB + 15) s.x = -15;
+      if (s.y < -15) s.y = HB + 15;
+      if (s.y > HB + 15) s.y = -15;
+    }
+
+    // 3. Draw High-Visibility Constellation Lines
+    for (let i = 0; i < starCount; i++) {
+      const a = stars[i];
+      for (let j = i + 1; j < starCount; j++) {
+        const b = stars[j];
         const dx = a.x - b.x;
         const dy = a.y - b.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
 
+        if (Math.abs(dx) > CONNECT_DIST || Math.abs(dy) > CONNECT_DIST) continue;
+
+        const dist = Math.hypot(dx, dy);
         if (dist < CONNECT_DIST) {
-          const avgLayer = (a.layer + b.layer) * 0.5;
-          const lineAlpha =
-            (1 - dist / CONNECT_DIST) *
-            0.14 *
-            (0.3 + avgLayer * 0.7) *
-            (a.o * b.o);
+          a.connections++;
+          b.connections++;
+
+          const ratio = 1 - dist / CONNECT_DIST;
+          const alpha = Math.pow(ratio, 1.25) * (isLight ? 0.22 : 0.48);
+
+          const grad = ctxBody.createLinearGradient(a.x, a.y, b.x, b.y);
+          if (isLight) {
+            grad.addColorStop(0, `rgba(16, 119, 136, ${alpha})`);
+            grad.addColorStop(1, `rgba(11, 73, 132, ${alpha})`);
+          } else {
+            grad.addColorStop(
+              0,
+              `rgba(${a.color.r}, ${a.color.g}, ${a.color.b}, ${alpha})`
+            );
+            grad.addColorStop(
+              1,
+              `rgba(${b.color.r}, ${b.color.g}, ${b.color.b}, ${alpha})`
+            );
+          }
+
           ctxBody.beginPath();
           ctxBody.moveTo(a.x, a.y);
           ctxBody.lineTo(b.x, b.y);
-          ctxBody.strokeStyle = `rgba(${rgb},${lineAlpha})`;
-          ctxBody.lineWidth = 0.6;
+          ctxBody.strokeStyle = grad;
+          ctxBody.lineWidth = Math.max(0.6, ratio * 1.4);
           ctxBody.stroke();
+        }
+      }
+
+      // 4. Mouse Interactive Laser Filament Ray Cast
+      if (mouse.active) {
+        const dxM = mouse.currX - a.x;
+        const dyM = mouse.currY - a.y;
+        if (Math.abs(dxM) < MOUSE_RADIUS && Math.abs(dyM) < MOUSE_RADIUS) {
+          const distM = Math.hypot(dxM, dyM);
+          if (distM < MOUSE_RADIUS) {
+            const mRatio = 1 - distM / MOUSE_RADIUS;
+            const mAlpha = Math.pow(mRatio, 1.2) * (isLight ? 0.35 : 0.72);
+
+            ctxBody.beginPath();
+            ctxBody.moveTo(a.x, a.y);
+            ctxBody.lineTo(mouse.currX, mouse.currY);
+            ctxBody.strokeStyle = isLight
+              ? `rgba(16, 119, 136, ${mAlpha})`
+              : `rgba(79, 163, 232, ${mAlpha})`;
+            ctxBody.lineWidth = Math.max(0.7, mRatio * 1.6);
+            ctxBody.stroke();
+          }
         }
       }
     }
 
-    for (let i = 0; i < bodyStars.length; i++) {
-      const s = bodyStars[i];
-      const dx = s.x - CXB;
-      const dy = s.y - CYB;
-      const distToCenter = Math.sqrt(dx * dx + dy * dy);
-      const currentStretch = (distToCenter / WB) * STRETCH_FACTOR * s.layer;
+    // 5. Draw Prominent Glowing Constellation Stars & Diffraction Spikes
+    for (let i = 0; i < starCount; i++) {
+      const s = stars[i];
+      const pulse = 0.75 + 0.25 * Math.sin(s.phase);
+      const alpha = s.baseAlpha * pulse * (isLight ? 0.65 : 1.0);
+      const rgb = isLight
+        ? "16, 75, 136"
+        : `${s.color.r}, ${s.color.g}, ${s.color.b}`;
 
+      // Vibrant Corona Halo for Major Stars
+      if (s.isMajor && !isLight) {
+        const haloGrad = ctxBody.createRadialGradient(
+          s.x,
+          s.y,
+          0,
+          s.x,
+          s.y,
+          s.radius * 4.2
+        );
+        haloGrad.addColorStop(0, `rgba(${rgb}, ${alpha * 0.65})`);
+        haloGrad.addColorStop(0.4, `rgba(79, 163, 232, ${alpha * 0.28})`);
+        haloGrad.addColorStop(1, "rgba(79, 163, 232, 0)");
+
+        ctxBody.beginPath();
+        ctxBody.arc(s.x, s.y, s.radius * 4.2, 0, Math.PI * 2);
+        ctxBody.fillStyle = haloGrad;
+        ctxBody.fill();
+
+        // 4-Point Optical Diffraction Spikes
+        const spikeLen = s.radius * 4.6;
+        ctxBody.beginPath();
+        ctxBody.moveTo(s.x - spikeLen, s.y);
+        ctxBody.lineTo(s.x + spikeLen, s.y);
+        ctxBody.moveTo(s.x, s.y - spikeLen);
+        ctxBody.lineTo(s.x, s.y + spikeLen);
+        ctxBody.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.45})`;
+        ctxBody.lineWidth = 0.75;
+        ctxBody.stroke();
+      }
+
+      // Solid Star Core
       ctxBody.beginPath();
-      ctxBody.moveTo(s.x, s.y);
-      ctxBody.lineTo(
-        s.x - Math.cos(s.angle) * currentStretch,
-        s.y - Math.sin(s.angle) * currentStretch,
-      );
-      ctxBody.strokeStyle = `rgba(${rgb},${s.o})`;
-      ctxBody.lineWidth = s.r;
-      ctxBody.lineCap = "round";
-      ctxBody.stroke();
+      ctxBody.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+      ctxBody.fillStyle = `rgba(${rgb}, ${alpha})`;
+      ctxBody.fill();
     }
   }
 
@@ -268,7 +566,6 @@ if (canvasBody) {
   window.addEventListener("resize", resizeBody);
   drawBody();
 }
-
 
 // =============================================================================
 // Stats Counter
@@ -320,7 +617,7 @@ const co = new IntersectionObserver(
   },
   { threshold: 0.1 },
 );
-document.querySelectorAll(".program-card, .branch-card").forEach((el) => {
+document.querySelectorAll(".program-card").forEach((el) => {
   el.style.opacity = "0";
   el.style.transform = "translateY(28px)";
   el.style.transition = "opacity .5s ease, transform .5s ease";
@@ -356,10 +653,8 @@ window.addEventListener("scroll", () => {
 function initHamburger() {
   const hamburger = document.getElementById("nav-hamburger");
   const navLinks = document.getElementById("nav-links");
-  const dropdown = document.getElementById("nav-programs");
-  const dropToggle = document.getElementById("nav-programs-toggle");
 
-  if (!hamburger || !navLinks || !dropdown || !dropToggle) return; // Sync the drawer's top position to the real nav height
+  if (!hamburger || !navLinks) return;
 
   function syncDrawerTop() {
     const nav = document.querySelector("nav");
@@ -376,41 +671,29 @@ function initHamburger() {
     navLinks.classList.remove("is-open");
     hamburger.classList.remove("is-open");
     hamburger.setAttribute("aria-expanded", "false");
-  } // Hamburger toggle
+  }
 
   hamburger.addEventListener("click", () => {
     const opening = !navLinks.classList.contains("is-open");
-    syncDrawerTop(); // re-measure in case nav shrank on scroll
+    syncDrawerTop();
     if (opening) {
       navLinks.classList.add("is-open");
-
       hamburger.classList.add("is-open");
-
       hamburger.setAttribute("aria-expanded", "true");
     } else {
       closeMenu();
     }
-  }); // Programs: accordion on mobile, hover on desktop (CSS handles desktop)
-
-  dropToggle.addEventListener("click", (e) => {
-    if (window.innerWidth <= 860) {
-      e.preventDefault();
-      e.stopPropagation();
-      dropdown.classList.toggle("is-open");
-    }
-  }); // Close when any regular link is tapped
+  });
 
   navLinks.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
-      if (link === dropToggle && window.innerWidth <= 860) return;
       closeMenu();
     });
-  }); // Reset on resize to desktop
+  });
 
   window.addEventListener("resize", () => {
-    if (window.innerWidth > 860) {
+    if (window.innerWidth > 868) {
       closeMenu();
-      dropdown.classList.remove("is-open");
     }
   });
 }
@@ -434,12 +717,12 @@ if (placeholder) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// Gallery tab switcher — clean rewrite
+// Gallery tab switcher - clean rewrite
 // ═══════════════════════════════════════════════════════════════
 (function () {
   const tabs = document.querySelectorAll(".gtab");
   const indicator = document.querySelector(".gtab-indicator");
-  if (!tabs.length || !indicator) return; // All panel ids in order — direction is determined by index comparison
+  if (!tabs.length || !indicator) return; // All panel ids in order - direction is determined by index comparison
 
   const panelOrder = ["workshops", "astrophoto"];
   let current = "workshops";
@@ -469,7 +752,7 @@ if (placeholder) {
     inPanel.style.top = "0";
     inPanel.style.left = "0";
     inPanel.style.width = "100%";
-    inPanel.style.pointerEvents = "none"; // Force reflow — makes the browser register the starting position
+    inPanel.style.pointerEvents = "none"; // Force reflow - makes the browser register the starting position
 
     void inPanel.offsetWidth; // 4. Slide both panels simultaneously
 
@@ -537,5 +820,41 @@ if (placeholder) {
 
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => switchTab(tab.dataset.tab));
+  });
+})();
+
+// =============================================================================
+// PROGRAM CARDS 3D TILT & SPOTLIGHT INTERACTION
+// =============================================================================
+(function initCardTilt() {
+  const cards = document.querySelectorAll(".prog-intro-card");
+  if (!cards.length) return;
+
+  cards.forEach((card) => {
+    const glow = card.querySelector(".prog-card-glow");
+
+    card.addEventListener("mousemove", (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateX = ((y - centerY) / centerY) * -5;
+      const rotateY = ((x - centerX) / centerX) * 5;
+
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+
+      if (glow) {
+        glow.style.opacity = "1";
+        glow.style.background = `radial-gradient(500px circle at ${x}px ${y}px, rgba(79, 163, 232, 0.16), transparent 70%)`;
+      }
+    });
+
+    card.addEventListener("mouseleave", () => {
+      card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)";
+      if (glow) glow.style.opacity = "0";
+    });
   });
 })();

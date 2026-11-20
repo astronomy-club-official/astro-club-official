@@ -3,103 +3,609 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Support OCT Astronomy Club" />
-    <title>Donate – OCT Astronomy Club</title>
+    <meta name="description" content="Support OCT Astronomy Club - 501(c)(3) Tax-Deductible Donation" />
+    <title>Donate - OCT Astronomy Club</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <link rel="stylesheet" href="css/style.css" />
     <script src="js/theme.js"></script>
+    <style>
+      .donate-page-wrap {
+        padding-top: 5.75rem;
+        padding-bottom: 5.5rem;
+        min-height: 100vh;
+        position: relative;
+        z-index: 1;
+      }
+
+      .donate-container {
+        max-width: 1260px;
+        margin: 0 auto;
+        padding: 0 4%;
+      }
+
+      /* Compact Top Header */
+      .donate-top-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid rgba(79, 163, 232, 0.15);
+      }
+
+      .donate-top-left {
+        max-width: 680px;
+      }
+
+      .donate-main-title {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(1.85rem, 3.2vw, 2.5rem);
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+        margin-top: 0.4rem;
+      }
+
+      .donate-top-right {
+        max-width: 440px;
+        font-size: 0.94rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+        text-align: right;
+      }
+
+      @media (max-width: 960px) {
+        .donate-top-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+          margin-bottom: 1.75rem;
+        }
+        .donate-top-right {
+          text-align: left;
+          max-width: 100%;
+        }
+      }
+
+      /* Side-by-Side Split Grid */
+      .donate-split-grid {
+        display: grid;
+        grid-template-columns: 1.35fr 430px;
+        gap: 2.25rem;
+        align-items: start;
+      }
+
+      @media (max-width: 1080px) {
+        .donate-split-grid {
+          grid-template-columns: 1fr;
+          gap: 2.5rem;
+        }
+      }
+
+      /* Left Column: 2x2 Impact Grid */
+      .donate-impact-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
+
+      @media (max-width: 740px) {
+        .donate-impact-grid {
+          grid-template-columns: 1fr;
+          gap: 1.25rem;
+        }
+      }
+
+      .donate-impact-card {
+        background: #0a1120;
+        border: 1px solid rgba(79, 163, 232, 0.22);
+        border-radius: 20px;
+        padding: 2rem 1.85rem 1.85rem;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .donate-impact-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top right, rgba(79, 163, 232, 0.08), transparent 60%);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .donate-impact-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(79, 163, 232, 0.55);
+        box-shadow: 0 20px 45px rgba(5, 10, 20, 0.65), 0 0 25px rgba(79, 163, 232, 0.18);
+      }
+
+      .donate-impact-card:hover::before {
+        opacity: 1;
+      }
+
+      .impact-header-row {
+        display: flex;
+        align-items: center;
+        gap: 1.1rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .impact-logo-frame {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(79, 163, 232, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 7px;
+        box-shadow: 0 4px 16px rgba(79, 163, 232, 0.2);
+        overflow: hidden;
+      }
+
+      .impact-logo-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .impact-sub-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--accent);
+        margin-bottom: 0.25rem;
+        display: block;
+      }
+
+      .impact-meta-title {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.22rem;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: -0.01em;
+        line-height: 1.25;
+        margin: 0;
+      }
+
+      .impact-desc {
+        font-size: 0.93rem;
+        color: var(--text-muted);
+        line-height: 1.7;
+        margin: 0;
+        flex-grow: 1;
+      }
+
+      /* Right Column: Sticky Donation Hub */
+      .donate-hub-column {
+        position: sticky;
+        top: 5.75rem;
+      }
+
+      @media (max-width: 1080px) {
+        .donate-hub-column {
+          position: static;
+        }
+      }
+
+      .donate-hub-panel {
+        background: linear-gradient(165deg, #0d1829 0%, #080f1c 100%);
+        border: 1px solid rgba(79, 163, 232, 0.35);
+        border-radius: 24px;
+        padding: 2.25rem 2rem;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 35px rgba(79, 163, 232, 0.12);
+        display: flex;
+        flex-direction: column;
+        gap: 1.35rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .donate-hub-panel::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #107788, #4fa3e8, #60a5fa);
+      }
+
+      .donate-hub-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        background: rgba(79, 163, 232, 0.12);
+        border: 1px solid rgba(79, 163, 232, 0.3);
+        color: var(--accent);
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        width: fit-content;
+      }
+
+      .donate-hub-panel h2 {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.65rem;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+      }
+
+      .donate-hub-panel p {
+        font-size: 0.92rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+
+      /* Preset Amount Selector */
+      .preset-selector-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--accent);
+      }
+
+      .preset-btn-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.6rem;
+      }
+
+      .amount-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 12px;
+        padding: 0.75rem 0.4rem;
+        color: #ffffff;
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        min-height: 44px;
+      }
+
+      .amount-btn:hover {
+        background: rgba(79, 163, 232, 0.2);
+        border-color: var(--accent);
+        color: var(--accent);
+        transform: translateY(-2px);
+      }
+
+      .amount-btn.active {
+        background: var(--accent);
+        color: #050a14;
+        border-color: var(--accent);
+        box-shadow: 0 0 20px rgba(79, 163, 232, 0.5);
+      }
+
+      /* Dynamic Impact Preview */
+      .impact-preview-callout {
+        background: rgba(79, 163, 232, 0.08);
+        border: 1px solid rgba(79, 163, 232, 0.22);
+        border-radius: 12px;
+        padding: 0.85rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.85rem;
+        color: #e2e8f0;
+      }
+
+      .impact-preview-callout i {
+        color: var(--accent);
+        font-size: 1.05rem;
+        flex-shrink: 0;
+      }
+
+      /* Primary Action Button */
+      .donate-action-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 1.05rem 1.5rem;
+        border-radius: 14px;
+        background: var(--accent);
+        color: #050a14;
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+        text-decoration: none;
+        box-shadow: 0 0 30px rgba(79, 163, 232, 0.5);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        min-height: 48px;
+      }
+
+      .donate-action-btn:hover {
+        background: #62b4f5;
+        box-shadow: 0 0 45px rgba(79, 163, 232, 0.75);
+        transform: translateY(-2px);
+        color: #020617;
+      }
+
+      /* Trust & Guarantees */
+      .donate-trust-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+        padding-top: 0.85rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .trust-item {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.65);
+      }
+
+      .trust-item i {
+        color: var(--accent);
+        font-size: 0.88rem;
+        width: 16px;
+        text-align: center;
+      }
+
+      /* Light Theme Styles */
+      [data-theme="light"] .donate-top-header {
+        border-color: rgba(11, 73, 132, 0.15);
+      }
+
+      [data-theme="light"] .donate-main-title {
+        color: #0f172a;
+      }
+
+      [data-theme="light"] .donate-impact-card {
+        background: #ffffff;
+        border-color: rgba(11, 73, 132, 0.14);
+        box-shadow: 0 14px 35px rgba(11, 73, 132, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      }
+
+      [data-theme="light"] .donate-impact-card:hover {
+        border-color: rgba(62, 140, 172, 0.5);
+        box-shadow: 0 20px 45px rgba(11, 73, 132, 0.16);
+      }
+
+      [data-theme="light"] .impact-meta-title {
+        color: #0f172a;
+      }
+
+      [data-theme="light"] .impact-logo-frame {
+        background: rgba(11, 73, 132, 0.06);
+        border-color: rgba(11, 73, 132, 0.22);
+        box-shadow: 0 4px 12px rgba(11, 73, 132, 0.08);
+      }
+
+      [data-theme="light"] .donate-hub-panel {
+        background: #ffffff;
+        border-color: rgba(11, 73, 132, 0.18);
+        box-shadow: 0 24px 60px rgba(11, 73, 132, 0.12);
+      }
+
+      [data-theme="light"] .donate-hub-panel h2 {
+        color: #0f172a;
+      }
+
+      [data-theme="light"] .amount-btn {
+        background: rgba(11, 73, 132, 0.05);
+        border-color: rgba(11, 73, 132, 0.14);
+        color: #0f172a;
+      }
+
+      [data-theme="light"] .amount-btn.active {
+        background: #0b4984;
+        color: #ffffff;
+        border-color: #0b4984;
+      }
+
+      [data-theme="light"] .impact-preview-callout {
+        background: rgba(11, 73, 132, 0.06);
+        border-color: rgba(11, 73, 132, 0.15);
+        color: #1e293b;
+      }
+
+      [data-theme="light"] .donate-action-btn {
+        background: linear-gradient(135deg, #3e8cac, #0b4984);
+        color: #ffffff;
+      }
+
+      [data-theme="light"] .trust-item {
+        color: #475569;
+      }
+
+      @media (max-width: 768px) {
+        .donate-page-wrap {
+          padding-top: 5rem;
+        }
+        .donate-impact-card {
+          padding: 1.6rem 1.4rem;
+        }
+        .donate-hub-panel {
+          padding: 1.75rem 1.5rem;
+        }
+      }
+    </style>
   </head>
 
   <body>
-    <canvas id="stars-bg"></canvas>
+    <canvas id="stars-bg-body"></canvas>
 
     <div id="navbar-placeholder"></div>
 
-    <section class="donate-page" style="padding-top: 10rem; min-height: 100vh">
-      <div style="max-width: 1200px; margin: 0 auto">
-        <div class="section-tag">Support Our Mission</div>
-
-        <h1 class="section-title">
-          Help the OCT Astronomy Club Reach the Stars
-        </h1>
-
-        <p class="section-subtitle">
-          Your donation helps us organize workshops, astronomy nights,
-          competitions, scientific outreach, and provide opportunities for
-          students passionate about space and science.
-        </p>
-      </div>
-
-      <div class="contact-grid">
-        <div class="contact-info">
-          <h3 class="info-title">Your Donation Supports</h3>
-
-          <div class="join-card">
-            <div class="join-card__icon">🔭</div>
-
-            <div class="join-card__content">
-              <strong>Equipment</strong>
-              <p>
-                Purchase telescopes, cameras, and observation tools for
-                students.
-              </p>
-            </div>
+    <section class="donate-page-wrap">
+      <div class="donate-container">
+        
+        <!-- Header Bar immediately visible above the fold -->
+        <div class="donate-top-header">
+          <div class="donate-top-left">
+            <div class="section-tag"><i class="fa-solid fa-hand-holding-heart"></i> Direct Student Support</div>
+            <h1 class="donate-main-title">Invest in Tomorrow's Astroscientists</h1>
           </div>
-
-          <div class="join-card">
-            <div class="join-card__icon">🚀</div>
-
-            <div class="join-card__content">
-              <strong>Workshops & Events</strong>
-              <p>
-                Fund astronomy workshops, observation nights, competitions, and
-                guest speakers.
-              </p>
-            </div>
-          </div>
-
-          <div class="join-card">
-            <div class="join-card__icon">🌍</div>
-
-            <div class="join-card__content">
-              <strong>Student Opportunities</strong>
-              <p>
-                Help talented students participate in scientific competitions
-                and outreach programs.
-              </p>
-            </div>
+          <div class="donate-top-right">
+            Every contribution directly funds GAAC Olympiad infrastructure, 
+            AstraVale optical telescopes, and our complete 24-session academic curriculum.
           </div>
         </div>
 
-        <div class="contact-form" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 2rem; padding: 3rem 2rem;">
-          <div class="about-header-spinner" style="margin-bottom: 0.5rem;">
-            <img src="images/Club_Logo_Black_BG-removebg-preview.png" alt="Astronomy Club" />
+        <!-- Split Side-by-Side Layout -->
+        <div class="donate-split-grid">
+          
+          <!-- Left Column: 4 Clean Impact Blocks -->
+          <div class="donate-impact-grid">
+
+            <!-- Card 1: GAAC -->
+            <div class="donate-impact-card">
+              <div class="impact-header-row">
+                <div class="impact-logo-frame">
+                  <img src="Club Full Logos/gaac_black_without_bg.png" alt="GAAC Logo" />
+                </div>
+                <div>
+                  <span class="impact-sub-label">International Competition</span>
+                  <h3 class="impact-meta-title">GAAC Global Challenge</h3>
+                </div>
+              </div>
+              <p class="impact-desc">
+                The Global Astronomy &amp; Astrophysics Challenge is an international competition organized by the STEM October Astronomy Club for high school students worldwide. Contributions fund the global qualification rounds, cloud examination servers, international merit medals, and travel sponsorships for top finalists competing across Astronomy, Astrophysics, Cosmology, Observational Astronomy, and Orbital Mechanics.
+              </p>
+            </div>
+
+            <!-- Card 2: Training Season (24+ Sessions) -->
+            <div class="donate-impact-card">
+              <div class="impact-header-row">
+                <div class="impact-logo-frame">
+                  <img src="images/Club_Logo_Black_BG-removebg-preview.png" alt="Training Season Logo" />
+                </div>
+                <div>
+                  <span class="impact-sub-label">Academic Curriculum</span>
+                  <h3 class="impact-meta-title">Training Season (24+ Sessions)</h3>
+                </div>
+              </div>
+              <p class="impact-desc">
+                Powers our structured 24-session annual academic curriculum covering Celestial Mechanics, Theoretical Astrophysics, Cosmology, and Observational Astronomy. Contributions directly subsidize Olympiad problem-solving seminars, study materials, and specialized computational software licenses for all student members.
+              </p>
+            </div>
+
+            <!-- Card 3: AstraVale -->
+            <div class="donate-impact-card">
+              <div class="impact-header-row">
+                <div class="impact-logo-frame">
+                  <img src="Club Full Logos/astravale_black_without_bg.png" alt="AstraVale Logo" />
+                </div>
+                <div>
+                  <span class="impact-sub-label">Astrophotography &amp; Observation</span>
+                  <h3 class="impact-meta-title">AstraVale Astrophotography</h3>
+                </div>
+              </div>
+              <p class="impact-desc">
+                AstraVale is the premier astrophotography and stargazing workshop series hosted by the STEM October Astronomy Club. Contributions equip students to capture the cosmos through practical telescope handling, camera optics, narrowband filters, deep-sky celestial imaging, astronomical image processing, and overnight observation expeditions.
+              </p>
+            </div>
+
+            <!-- Card 4: Academic Outreach -->
+            <div class="donate-impact-card">
+              <div class="impact-header-row">
+                <div class="impact-logo-frame">
+                  <img src="Club Full Logos/outreach_white.svg" alt="Student Outreach Logo" />
+                </div>
+                <div>
+                  <span class="impact-sub-label">Need-Blind Inclusion</span>
+                  <h3 class="impact-meta-title">Need-Blind Student Sponsorship</h3>
+                </div>
+              </div>
+              <p class="impact-desc">
+                Guarantees 100% need-blind participation across all club initiatives. Contributions cover competition registration fees, telescope access, laboratory safety gear, and travel subsidies, ensuring that financial barriers never prevent talented STEM students from pursuing astronomy and astrophysics.
+              </p>
+            </div>
+
           </div>
 
-          <h3 class="info-title" style="margin: 0;">Support the Club</h3>
+          <!-- Right Column: Sticky Donation Hub -->
+          <div class="donate-hub-column">
+            <div class="donate-hub-panel">
+              <span class="donate-hub-badge">
+                <i class="fa-solid fa-landmark"></i> 501(c)(3) Fiscal Sponsorship
+              </span>
+              
+              <h2>Make Your Contribution</h2>
+              
+              <p>
+                All gifts are processed securely through Hack Club, an accredited 501(c)(3) non-profit organization. 
+                Contributions are 100% tax-deductible to the fullest extent permitted by law.
+              </p>
 
-          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; max-width: 360px;">
-            Every contribution helps us provide equipment, workshops, and opportunities for students passionate about space and science.
-          </p>
+              <div>
+                <div class="preset-selector-label" style="margin-bottom: 0.6rem;">Select Contribution Level:</div>
+                <div class="preset-btn-grid">
+                  <button type="button" class="amount-btn" data-amt="25" onclick="selectAmount(25, this)">$25</button>
+                  <button type="button" class="amount-btn active" data-amt="50" onclick="selectAmount(50, this)">$50</button>
+                  <button type="button" class="amount-btn" data-amt="100" onclick="selectAmount(100, this)">$100</button>
+                  <button type="button" class="amount-btn" data-amt="250" onclick="selectAmount(250, this)">$250</button>
+                </div>
+              </div>
 
-          <a href="https://hcb.hackclub.com/donations/start/stem-october-astronomy-club"
-             class="btn-primary"
-             target="_blank"
-             style="display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.9rem 2.2rem; font-size: 1rem; text-decoration: none;">
-            <i class="fa-solid fa-heart"></i>
-            Donate Now
-          </a>
+              <!-- Live Dynamic Impact Preview -->
+              <div class="impact-preview-callout" id="impact-preview">
+                <i class="fa-solid fa-sparkles"></i>
+                <span id="impact-text">Covers observation night consumables &amp; telescope power packs</span>
+              </div>
 
-          <p style="color: var(--text-dim); font-size: 0.75rem; line-height: 1.5; max-width: 380px; margin-top: 0.5rem;">
-            Fiscally sponsored by The Hack Foundation (d.b.a. Hack Club), a 501(c)(3) nonprofit (EIN: 81-2908499)
-          </p>
+              <!-- Action Link to Hack Club -->
+              <a
+                id="donate-btn-link"
+                href="https://hcb.hackclub.com/donations/start/october-stem-astronomy-club?amount=50"
+                target="_blank"
+                class="donate-action-btn"
+              >
+                <span>Proceed to Tax-Deductible Donation</span>
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>
+
+              <!-- Trust & Security Guarantees -->
+              <div class="donate-trust-list">
+                <div class="trust-item">
+                  <i class="fa-solid fa-shield-halved"></i>
+                  <span>100% directly allocated to student activities and optical equipment</span>
+                </div>
+                <div class="trust-item">
+                  <i class="fa-solid fa-receipt"></i>
+                  <span>Instant official tax receipt issued by Hack Club Bank</span>
+                </div>
+                <div class="trust-item">
+                  <i class="fa-solid fa-lock"></i>
+                  <span>256-bit encrypted bank-grade SSL payment infrastructure</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -108,5 +614,63 @@
 
     <script src="js/components.js"></script>
     <script src="js/main.js"></script>
+    <!-- GSAP Animation Engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Interactive Amount Selector & Impact Statement
+      const impactMap = {
+        25: "Sponsors student laboratory safety equipment and optical cleaning gear.",
+        50: "Covers observation night consumables & telescope power packs.",
+        100: "Funds GAAC examination cloud infrastructure & problem-set publications.",
+        250: "Directly sponsors a student's full 24-session training curriculum and materials."
+      };
+
+      function selectAmount(amt, btn) {
+        document.querySelectorAll(".amount-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        
+        const previewText = document.getElementById("impact-text");
+        if (previewText && impactMap[amt]) {
+          gsap.to(previewText, {
+            opacity: 0,
+            duration: 0.15,
+            onComplete: () => {
+              previewText.textContent = impactMap[amt];
+              gsap.to(previewText, { opacity: 1, duration: 0.25 });
+            }
+          });
+        }
+
+        const link = document.getElementById("donate-btn-link");
+        if (link) {
+          link.href = `https://hcb.hackclub.com/donations/start/october-stem-astronomy-club?amount=${amt}`;
+        }
+
+        gsap.fromTo(btn, { scale: 0.94 }, { scale: 1, duration: 0.3, ease: "back.out(2)" });
+      }
+
+      // Coordinated Entrance Timeline
+      const donateTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      donateTl
+        .from(".donate-top-header", {
+          opacity: 0,
+          y: -20,
+          duration: 0.7
+        })
+        .from(".donate-impact-card", {
+          opacity: 0,
+          x: -30,
+          duration: 0.75,
+          stagger: 0.1
+        }, "-=0.35")
+        .from(".donate-hub-panel", {
+          opacity: 0,
+          x: 35,
+          duration: 0.8
+        }, "-=0.55");
+    </script>
   </body>
 </html>

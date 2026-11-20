@@ -6,6 +6,12 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((res) => res.text())
       .then((data) => {
         navPlaceholder.innerHTML = data;
+        if (typeof updateThemeToggleUI === "function") {
+          updateThemeToggleUI();
+        }
+        if (typeof initHamburger === "function") {
+          initHamburger();
+        }
       });
   }
 

@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="About OCT Astronomy Club" />
-  <title>About Us – OCT Astronomy Club</title>
+  <title>About Us - OCT Astronomy Club</title>
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,7 +19,7 @@
 
 <body>
 
-  <canvas id="stars-bg"></canvas>
+  <canvas id="stars-bg-body"></canvas>
 
   <div id="navbar-placeholder"></div>
 
@@ -90,8 +90,8 @@
             <img src="images/board/adel2.jpeg" alt="Adel Wasfy" class="member-img" loading="lazy">
           </div>
           <div class="member-info">
-            <h4 class="member-name">Adel Wasfy</h4>
-            <span class="member-role">President · GAAC Founder & Main Organizer</span>
+            <h4 class="member-name">Adel Wasfy Elwakeel</h4>
+            <span class="member-role">President · GAAC Founder &amp; Main Organizer</span>
             <div class="member-socials">
               <a href="https://www.linkedin.com/in/adel-wasfy-37928729a/" target="_blank" title="LinkedIn">
                 <i class="fa-brands fa-linkedin"></i>
@@ -127,7 +127,7 @@
           </div>
           <div class="member-info">
             <h4 class="member-name">Kerollos Romany</h4>
-            <span class="member-role">Academic Mentor</span>
+            <span class="member-role">Vice President</span>
             <div class="member-socials">
               <a href="mailto:kerooromany816@gmail.com" target="_blank" title="Mail">
                 <i class="fa-solid fa-envelope"></i>
@@ -182,6 +182,17 @@
 
   <script src="js/components.js"></script>
   <script src="js/main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.from(".about-header-logo", { opacity: 0, y: 24, duration: 0.8, ease: "power2.out", delay: 0.2 });
+    gsap.from(".section-tag, .section-title, .section-subtitle", { opacity: 0, y: 20, stagger: 0.1, duration: 0.7, ease: "power2.out", delay: 0.3 });
+    gsap.from(".about-imgs .aimg", { scrollTrigger: { trigger: ".about-grid", start: "top 85%" }, opacity: 0, x: -32, stagger: 0.12, duration: 0.7, ease: "power2.out" });
+    gsap.from(".about-text", { scrollTrigger: { trigger: ".about-grid", start: "top 85%" }, opacity: 0, x: 32, duration: 0.7, ease: "power2.out" });
+    gsap.from(".board-card", { scrollTrigger: { trigger: ".board-grid", start: "top 85%" }, opacity: 0, y: 36, stagger: 0.1, duration: 0.65, ease: "power2.out" });
+  </script>
 </body>
 
 </html>

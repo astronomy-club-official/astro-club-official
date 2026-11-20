@@ -14,33 +14,33 @@
         Astronomy Club
       </a>
 
-      <div class="nav-buttons">
-        <a
-          href="https://astravale.stemastronomyclub.org/"
-          class="nav-btn nav-btn-donate btn-primary"
-          aria-label="AstraVale"
-        >
-          <img
-            src="Club Full Logos/astravale_black_without_bg.png"
-            style="width: 30px; height: 30px; object-fit: contain"
-          />
-          AstraVale
-        </a>
-        <a href="https://gaac.stemastronomyclub.org/"
-          class="nav-btn nav-btn-gaac btn-primary" aria-label="GAAC">
-          <img
-            src="Club Full Logos/gaac_black_without_bg.png"
-            style="width: 30px; height: 30px; object-fit: contain"
-          />
-          GAAC
-        </a>
-      </div>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/partener">Partners</a></li>
+        <li><a href="https://gaac.stemastronomyclub.org/" target="_blank">GAAC</a></li>
+        <li><a href="https://astravale.stemastronomyclub.org/" target="_blank">AstraVale</a></li>
+        <li><a href="/#gallery">Gallery</a></li>
+        <li><a href="/donate">Donate</a></li>
+      </ul>
 
       <div class="nav-center">
-        <label class="astro-switch" aria-label="Toggle Light/Dark Mode">
-          <input type="checkbox" id="theme-checkbox" onchange="toggleTheme()" />
-          <span class="astro-slider"></span>
-        </label>
+        <button
+          class="theme-toggle-btn"
+          id="theme-toggle-btn"
+          onclick="toggleTheme()"
+          aria-label="Toggle Light and Dark Mode"
+          type="button"
+        >
+          <span class="theme-toggle-track">
+            <span class="theme-icon sun-icon"><i class="fa-solid fa-sun"></i></span>
+            <span class="theme-icon moon-icon"><i class="fa-solid fa-moon"></i></span>
+            <span class="theme-toggle-thumb">
+              <i class="fa-solid fa-moon thumb-moon"></i>
+              <i class="fa-solid fa-sun thumb-sun"></i>
+            </span>
+          </span>
+        </button>
       </div>
 
       <button
@@ -53,47 +53,6 @@
         <span></span>
         <span></span>
       </button>
-
-      <ul class="nav-links" id="nav-links">
-        <li><a href="/">Home</a></li>
-
-        <li class="navbar__dropdown" id="nav-programs">
-          <a class="navbar__dropdown-toggle" id="nav-programs-toggle">
-            About
-            <svg
-              class="navbar__dropdown-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </a>
-
-          <ul class="navbar__dropdown-menu">
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/contact">Contact</a></li>
-            <li><a href="/partener">Partners</a></li>
-            <li><a href="/join">Join the Club</a></li>
-          </ul>
-        </li>
-
-        <li><a href="https://gaac.stemastronomyclub.org/" target="_blank">GAAC</a></li>
-
-        <li><a href="/#gallery">Gallery</a></li>
-
-        <li><a href="/donate">Donate</a></li>
-        <li class="mobile-only">
-          <a href="https://astravale.stemastronomyclub.org/"> AstraVale </a>
-        </li>
-
-        <li class="mobile-only">
-          <a href="https://gaac.stemastronomyclub.org/"> GAAC </a>
-        </li>
-      </ul>
     </nav>
   </body>
 </html>

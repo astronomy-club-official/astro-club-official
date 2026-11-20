@@ -556,59 +556,124 @@ nav.nav-scrolled .logo {
 }
 
 /* =============================================================================
-   THEME TOGGLE (ASTRO SWITCH)
+   THEME TOGGLE (ULTRA-MODERN CELESTIAL SWITCH)
    ============================================================================= */
 
-.astro-switch {
-  position: relative;
-  display: inline-block;
-  width: 64px;
-  height: 32px;
+.theme-toggle-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  outline: none;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   margin-left: 0.5rem;
 }
 
-.astro-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+.theme-toggle-btn:hover {
+  transform: scale(1.06);
 }
 
-.astro-slider {
-  position: absolute;
-  cursor: pointer;
-  inset: 0;
-  background-color: #0f172a;
-  transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+.theme-toggle-btn:active {
+  transform: scale(0.96);
+}
+
+.theme-toggle-track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 62px;
+  height: 32px;
   border-radius: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0 8px;
+  background: linear-gradient(135deg, #091220 0%, #0d1b30 100%);
+  border: 1px solid rgba(79, 163, 232, 0.35);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6), 0 0 14px rgba(79, 163, 232, 0.15);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
 
-.astro-slider::after {
-  content: "Dark";
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
+.theme-toggle-track .theme-icon {
   font-size: 11px;
-  font-weight: 600;
-  color: rgba(200, 220, 255, 0.7);
-  letter-spacing: 0.02em;
-  transition: 0.4s;
+  line-height: 1;
+  z-index: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
 }
 
-.astro-slider::before {
+.theme-toggle-track .sun-icon {
+  color: #fbbf24;
+  opacity: 0.3;
+  transform: scale(0.85);
+}
+
+.theme-toggle-track .moon-icon {
+  color: #93c5fd;
+  opacity: 0.95;
+  transform: scale(1);
+}
+
+.theme-toggle-thumb {
   position: absolute;
-  content: "";
-  height: 24px;
-  width: 24px;
-  left: 3px;
-  bottom: 3px;
-  background-color: #e2e8f0;
-  transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  left: 4px;
+  top: 4px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
+  background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.5), 0 0 12px rgba(79, 163, 232, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease, box-shadow 0.4s ease;
   z-index: 2;
-  box-shadow: inset -4px -2px 0px 0px #94a3b8;
+}
+
+.theme-toggle-thumb .thumb-moon {
+  font-size: 10px;
+  color: #ffffff;
+  display: block;
+}
+
+.theme-toggle-thumb .thumb-sun {
+  font-size: 10px;
+  color: #0f172a;
+  display: none;
+}
+
+/* Light Mode Active State */
+[data-theme="light"] .theme-toggle-track {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  border-color: rgba(56, 189, 248, 0.6);
+  box-shadow: inset 0 2px 4px rgba(11, 73, 132, 0.1), 0 0 14px rgba(56, 189, 248, 0.3);
+}
+
+[data-theme="light"] .theme-toggle-track .sun-icon {
+  opacity: 0.95;
+  transform: scale(1);
+}
+
+[data-theme="light"] .theme-toggle-track .moon-icon {
+  opacity: 0.3;
+  transform: scale(0.85);
+}
+
+[data-theme="light"] .theme-toggle-thumb {
+  transform: translateX(30px) rotate(360deg);
+  background: linear-gradient(135deg, #fde047 0%, #f59e0b 100%);
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.5), 0 0 16px rgba(251, 191, 36, 0.6);
+}
+
+[data-theme="light"] .theme-toggle-thumb .thumb-moon {
+  display: none;
+}
+
+[data-theme="light"] .theme-toggle-thumb .thumb-sun {
+  display: block;
 }
 
 /* =============================================================================
@@ -1532,6 +1597,9 @@ STEM OCT SCHOOL
 
 .branches-bg {
   background: var(--bg2);
+  padding: 6rem 5%;
+  position: relative;
+  z-index: 1;
 }
 
 .branches-grid {
@@ -1543,6 +1611,8 @@ STEM OCT SCHOOL
 }
 
 .branch-card {
+  opacity: 1 !important;
+  visibility: visible !important;
   border: 1px solid var(--border);
   border-radius: 18px;
   padding: 1.75rem;
@@ -1585,7 +1655,7 @@ STEM OCT SCHOOL
 }
 
 /* =============================================================================
-   ABOUT PAGE — ANIMATED LOGO
+   ABOUT PAGE - ANIMATED LOGO
    ============================================================================= */
 
 .about-logo-section {
@@ -1964,7 +2034,7 @@ footer {
   gap: 5px;
   width: 42px;
   height: 42px;
-  padding: 0; /* no padding — bars use explicit width */
+  padding: 0; /* no padding - bars use explicit width */
   background: transparent;
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -1982,7 +2052,7 @@ footer {
 .nav-hamburger span {
   display: block;
   height: 2px;
-  width: 20px; /* explicit px width — not % of button */
+  width: 20px; /* explicit px width - not % of button */
   background: var(--text-muted);
   border-radius: 2px;
   transition:
@@ -2003,7 +2073,7 @@ footer {
 }
 
 /* =============================================================================
-   RESPONSIVE — TABLET  (≤ 1024px)
+   RESPONSIVE - TABLET  (≤ 1024px)
    ============================================================================= */
 @media (max-width: 1200px) {
   .nav-links {
@@ -2042,7 +2112,7 @@ footer {
 }
 
 /* =============================================================================
-   RESPONSIVE — MOBILE  (≤ 860px)
+   RESPONSIVE - MOBILE  (≤ 860px)
    ============================================================================= */
 
 @media (max-width: 860px) {
@@ -2285,7 +2355,7 @@ nav {
   align-items: center;
 }
 /* =============================================================================
-   RESPONSIVE — SMALL MOBILE  (≤ 480px)
+   RESPONSIVE - SMALL MOBILE  (≤ 480px)
    ============================================================================= */
 
 @media (max-width: 480px) {
@@ -2523,9 +2593,9 @@ nav {
   left: 0;
   width: 100%;
   height: 100vh;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
-  background: var(--bg);
+  overflow: hidden;
 }
 
 #stars-bg-body {
@@ -2534,20 +2604,9 @@ nav {
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: -2;
+  z-index: 0;
   pointer-events: none;
-}
-
-#stars-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  z-index: -1;
-  pointer-events: none;
-  background: var(--bg);
-  transition: background-color 0.3s ease;
+  transition: opacity 0.4s ease;
 }
 [data-theme="light"] .hero h1 .gradient {
   background: linear-gradient(135deg, #0b4984, #3e8cac, #107788);
@@ -2796,4 +2855,510 @@ nav {
 
 i:not([class*="fa"]) {
    color: #49557f;
+}
+
+
+/* =============================================================================
+   PROGRAMS INTRO SECTION (Homepage - High-End Product Cards)
+   ============================================================================= */
+
+.programs-intro-section {
+  padding: 6.5rem 5%;
+  position: relative;
+  z-index: 1;
+}
+
+.programs-intro-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.programs-intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.25rem;
+}
+
+@media (max-width: 1024px) {
+  .programs-intro-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.prog-intro-card {
+  background: rgba(13, 24, 41, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(79, 163, 232, 0.16);
+  border-radius: 24px;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  will-change: transform;
+}
+
+.prog-card-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 0;
+}
+
+.prog-card-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+@media (max-width: 640px) {
+  .prog-card-body {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+.prog-intro-logo-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  flex-shrink: 0;
+}
+
+.prog-intro-logo {
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, rgba(79, 163, 232, 0.1), rgba(5, 10, 20, 0.8));
+  border: 1px solid rgba(79, 163, 232, 0.25);
+  border-radius: 20px;
+  padding: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(79, 163, 232, 0.08);
+  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.prog-intro-card:hover .prog-intro-logo {
+  transform: scale(1.06) rotate(-2deg);
+  border-color: rgba(79, 163, 232, 0.5);
+  box-shadow: 0 14px 36px rgba(79, 163, 232, 0.25), inset 0 0 25px rgba(79, 163, 232, 0.15);
+}
+
+.prog-intro-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(79, 163, 232, 0.3));
+}
+
+.prog-logo-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(79, 163, 232, 0.08);
+  border: 1px solid rgba(79, 163, 232, 0.2);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.prog-intro-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex-grow: 1;
+}
+
+.prog-intro-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.prog-intro-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.prog-intro-tag i {
+  font-size: 0.85rem;
+}
+
+.prog-intro-status {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.prog-intro-content h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.prog-intro-content p {
+  font-size: 0.93rem;
+  line-height: 1.68;
+  color: var(--text-muted);
+}
+
+.prog-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.35rem 0 0.5rem;
+}
+
+.feat-tag {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.28rem 0.7rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--text);
+  transition: all 0.25s ease;
+}
+
+.prog-intro-card:hover .feat-tag {
+  background: rgba(79, 163, 232, 0.08);
+  border-color: rgba(79, 163, 232, 0.2);
+  color: #dbeafe;
+}
+
+.prog-action {
+  margin-top: 0.4rem;
+}
+
+.prog-intro-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 1.35rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(79, 163, 232, 0.14), rgba(11, 73, 132, 0.22));
+  border: 1px solid rgba(79, 163, 232, 0.35);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.prog-intro-btn i {
+  font-size: 0.8rem;
+  transition: transform 0.25s ease;
+}
+
+.prog-intro-btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  box-shadow: 0 0 24px rgba(79, 163, 232, 0.5);
+  transform: translateY(-2px);
+}
+
+.prog-intro-btn:hover i {
+  transform: translateX(4px);
+}
+
+/* Light Mode Overrides */
+[data-theme="light"] .prog-intro-card {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(20px);
+  border-color: rgba(8, 56, 102, 0.12);
+  box-shadow: 0 16px 40px rgba(11, 73, 132, 0.08);
+}
+
+[data-theme="light"] .prog-intro-card:hover {
+  border-color: rgba(62, 140, 172, 0.45);
+  box-shadow: 0 24px 50px rgba(11, 73, 132, 0.15);
+}
+
+[data-theme="light"] .prog-intro-logo {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(8, 56, 102, 0.15);
+  box-shadow: 0 8px 20px rgba(11, 73, 132, 0.08);
+}
+
+[data-theme="light"] .prog-intro-logo img {
+  filter: none;
+  opacity: 1;
+}
+
+[data-theme="light"] .prog-intro-content h3 {
+  color: #0f172a;
+}
+
+[data-theme="light"] .feat-tag {
+  background: rgba(11, 73, 132, 0.05);
+  border-color: rgba(11, 73, 132, 0.1);
+  color: #1e293b;
+}
+
+[data-theme="light"] .prog-intro-btn {
+  background: linear-gradient(135deg, #3e8cac, #0b4984);
+  color: #ffffff;
+  border-color: #3e8cac;
+}
+
+
+/* =============================================================================
+   DONATE PAGE (Large Spacious Blocks & Hub)
+   ============================================================================= */
+
+.donate-impact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.25rem;
+  margin-bottom: 3.5rem;
+}
+
+@media (max-width: 900px) {
+  .donate-impact-grid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+}
+
+.donate-large-card {
+  background: rgba(13, 24, 41, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(79, 163, 232, 0.16);
+  border-radius: 22px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.donate-large-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(79, 163, 232, 0.45);
+  box-shadow: 0 20px 48px rgba(5, 10, 20, 0.5);
+}
+
+.donate-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.donate-icon-box {
+  width: 62px;
+  height: 62px;
+  border-radius: 16px;
+  background: radial-gradient(circle at center, rgba(79, 163, 232, 0.15), rgba(5, 10, 20, 0.7));
+  border: 1px solid rgba(79, 163, 232, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.45rem;
+  color: var(--accent);
+  flex-shrink: 0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.donate-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.donate-card-header h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.25;
+}
+
+.donate-card-desc {
+  font-size: 0.94rem;
+  line-height: 1.68;
+  color: var(--text-muted);
+  flex-grow: 1;
+}
+
+.donate-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.donate-tags span {
+  font-size: 0.74rem;
+  font-weight: 500;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  transition: all 0.25s ease;
+}
+
+.donate-large-card:hover .donate-tags span {
+  background: rgba(79, 163, 232, 0.08);
+  border-color: rgba(79, 163, 232, 0.2);
+  color: #dbeafe;
+}
+
+.donate-hub-card {
+  background: radial-gradient(circle at top right, rgba(16, 119, 136, 0.16), rgba(13, 24, 41, 0.85) 60%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(79, 163, 232, 0.25);
+  border-radius: 28px;
+  padding: 4rem 2.5rem;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.donate-hub-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.donate-hub-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.95rem;
+  border-radius: 999px;
+  background: rgba(79, 163, 232, 0.1);
+  border: 1px solid rgba(79, 163, 232, 0.3);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.donate-hub-inner h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.donate-hub-inner p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.donate-hub-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.donate-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2.75rem;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+  box-shadow: 0 0 28px rgba(79, 163, 232, 0.45);
+  transition: all 0.3s ease;
+}
+
+.donate-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 42px rgba(79, 163, 232, 0.7);
+  background: #62b4f5;
+  color: #050a14;
+}
+
+.donate-fiscal-note {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+/* Light Mode Overrides for Donate */
+[data-theme="light"] .donate-large-card {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(8, 56, 102, 0.12);
+  box-shadow: 0 16px 40px rgba(11, 73, 132, 0.08);
+}
+
+[data-theme="light"] .donate-large-card:hover {
+  border-color: rgba(62, 140, 172, 0.45);
+  box-shadow: 0 24px 50px rgba(11, 73, 132, 0.15);
+}
+
+[data-theme="light"] .donate-card-header h3 {
+  color: #0f172a;
+}
+
+[data-theme="light"] .donate-icon-box {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(8, 56, 102, 0.15);
+  box-shadow: 0 6px 16px rgba(11, 73, 132, 0.08);
+}
+
+[data-theme="light"] .donate-tags span {
+  background: rgba(11, 73, 132, 0.05);
+  border-color: rgba(11, 73, 132, 0.1);
+  color: #1e293b;
+}
+
+[data-theme="light"] .donate-hub-card {
+  background: radial-gradient(circle at top right, rgba(62, 140, 172, 0.12), rgba(255, 255, 255, 0.88) 60%);
+  border-color: rgba(8, 56, 102, 0.15);
+  box-shadow: 0 24px 60px rgba(11, 73, 132, 0.1);
+}
+
+[data-theme="light"] .donate-hub-inner h2 {
+  color: #0f172a;
+}
+
+[data-theme="light"] .donate-btn-primary {
+  background: linear-gradient(135deg, #3e8cac, #0b4984);
+  color: #ffffff;
 }
